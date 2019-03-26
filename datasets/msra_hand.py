@@ -151,6 +151,7 @@ class MARAHandDataset(Dataset):
                         frame_id += 1
                         file_id += 1
 
+
     def _compute_dataset_size(self):
         self.train_size, self.test_size = 0, 0
 

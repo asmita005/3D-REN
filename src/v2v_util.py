@@ -176,9 +176,10 @@ class V2VVoxelization(object):
             trans = self.original_size/2 - self.cropped_size/2
 
         input = generate_cubic_input(points, refpoint, new_size, angle, trans, self.sizes)
-        heatmap = generate_heatmap_gt(keypoints, refpoint, new_size, angle, trans, self.sizes, self.d3outputs, self.pool_factor, self.std)
+        output = generate_coord(keypoints, refpoint, new_size, angle, trans, self.sizes)
+       #heatmap = generate_heatmap_gt(keypoints, refpoint, new_size, angle, trans, self.sizes, self.d3outputs, self.pool_factor, self.std)
 
-        return input.reshape((1, *input.shape)), heatmap
+        return input.reshape((1, *input.shape)), output
 
     def voxelize(self, points, refpoint):
         new_size, angle, trans = 100, 0, self.original_size/2 - self.cropped_size/2
@@ -191,7 +192,8 @@ class V2VVoxelization(object):
         return heatmap
 
     def evaluate(self, heatmaps, refpoints):
-        coords = extract_coord_from_output(heatmaps)
-        coords *= self.pool_factor
-        keypoints = warp2continuous(coords, refpoints, self.cubic_size, self.cropped_size)
+        heatmaps = heatmaps.reshape(heatmaps.shape[0], 21,3)
+        #coords = extract_coord_from_output(heatmaps)
+        #coords *= self.pool_factor
+        keypoints = warp2continuous(heatmaps, refpoints, self.cubic_size, self.cropped_size)
         return keypoints
